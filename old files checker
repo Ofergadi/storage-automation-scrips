@@ -1,1 +1,41 @@
+import os
+
+folder_path = input("Enter a folder path: ")
+years = int(input("how many years back do you want to check: "))
+from datetime import datetime
+def old_files(folder_path,level=0):
+    last_modified = 0
+
+    for item in os.listdir(folder_path):
+        item_path = os.path.join(folder_path, item)
+
+        if os.path.isfile(item_path):
+            modified_time = os.path.getmtime(item_path)
+            if modified_time > last_modified:
+                last_modified = modified_time
+
+        elif os.path.isdir(item_path):
+            indent = "|  " * level
+            subfolder_last_modified = old_files(item_path, level + 1)
+
+            if subfolder_last_modified > last_modified:
+                last_modified = subfolder_last_modified
+
+            if datetime.fromtimestamp(last_modified).date() <= cutoff_date:
+                print(indent + "|   " + item)
+    return last_modified
+
+today = datetime.now().date()
+cutoff_date = today.replace(year=today.year - years)
+print(cutoff_date)
+result = old_files(folder_path)
+print (datetime.fromtimestamp(result).date())
+
+if datetime.fromtimestamp(result).date() <= cutoff_date:
+    print("OLD")
+
+else:
+    print("Active")
+
+print(datetime.fromtimestamp(result))
 
